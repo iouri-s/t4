@@ -44,39 +44,57 @@ namespace Mono.TextTemplating
         public const string GENERATOR_DESCRIPTION = "Generate files from T4 templates using the .NET Core 3.1 runtime.";
 
 		const string ERROR_OUTPUT = "ErrorGeneratingOutput";
+		string extension = ".cs";
 
-		protected override string ProcessTemplate(string inputFileName, string inputFileContent, ITextTemplating processor, IVsHierarchy hierarchy)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
+		public override string GetDefaultExtension ()
+		{
+			return extension ?? ".cs";
+		}
 
-            try
-            {
+		protected override byte[] GenerateCode (string inputFileName, string inputFileContent)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread ();
+
+			try {
+				DetectExtensionDirective (inputFileContent);
 				var outputFile = CreateTempTextFile (GetDefaultExtension ());
-				if(!RunT4Execute(inputFileName, outputFile, out var errors)) {
+
+				if (!RunT4Execute (inputFileName, outputFile, out var errors)) {
 					GenerateErrors (errors);
 					return null;
 				}
 
-				var output = File.ReadAllText (outputFile);
+				var output = File.ReadAllBytes (outputFile);
 				File.Delete (outputFile);
 
-                if( output == null )
-                {
-                    return ERROR_OUTPUT;
-                }
-                else
-                {
-                    return output;
-                }
-            }
-            catch( Exception ex)
-            {
-                GenerateError(false, $"Something went wrong processing the template '{inputFileName}': {ex}");
-                return ERROR_OUTPUT;
-            }
-        }
+				if (output == null) {
+					return Encoding.UTF8.GetBytes(ERROR_OUTPUT);
+				}
+
+				return output;
+			}
+			catch (Exception ex) {
+				GenerateError (false, $"Something went wrong processing the template '{inputFileName}': {ex}");
+				return Encoding.UTF8.GetBytes (ERROR_OUTPUT);
+			}
+		}
 
 		#region Private Methods
+
+		void DetectExtensionDirective (string inputFileContent)
+		{
+			Match m = Regex.Match (inputFileContent,
+			   @"<#@\s*output(?:\s+encoding=""[.a-z0-9- ]*"")?(?:\s+extension=""([.a-z0-9- ]*)"")?(?:\s+encoding=""[.a-z0-9- ]*"")?\s*#>",
+			   RegexOptions.IgnoreCase);
+
+			if (m.Success && m.Groups[1].Success) {
+				extension = m.Groups[1].Value;
+
+				if (extension != "" && !extension.StartsWith (".")) {
+					extension = "." + extension;
+				}
+			}
+		}
 
 		string CreateTempTextFile (string extension)
 		{
@@ -161,14 +179,6 @@ namespace Mono.TextTemplating
 				stdError.ReadLine ();
 
 				yield return new TemplateError (warning, message, line, column);
-			}
-		}
-
-		Encoding DetectFileEncoding (string file)
-		{
-			using (var reader = new StreamReader (file, Encoding.ASCII, true)) {
-				reader.ReadToEnd ();
-				return reader.CurrentEncoding;
 			}
 		}
 
