@@ -37,19 +37,13 @@ using Microsoft.VisualStudio.TextTemplating.VSHost;
 namespace Mono.TextTemplating
 {
     [Guid(GENERATOR_GUID)]
-    public sealed class TextTemplatingFileGeneratorCore : BaseTemplatedCodeGenerator, IVsSingleFileGenerator
+    public sealed class TextTemplatingFileGeneratorCore : BaseTemplatedCodeGenerator
     {
         public const string GENERATOR_GUID = "85B769DE-38F5-2020-91AE-D0DFA431FE30";
-        public const string GENERATOR_NAME = nameof(TextTemplatingFileGeneratorCore);
+        public const string GENERATOR_NAME = "dotnet-t4";
         public const string GENERATOR_DESCRIPTION = "Generate files from T4 templates using the .NET Core 3.1 runtime.";
 
 		const string ERROR_OUTPUT = "ErrorGeneratingOutput";
-
-		protected override byte[] GenerateCode (string inputFileName, string inputFileContent)
-		{
-			var resultBytes = base.GenerateCode (inputFileName, inputFileContent);
-			return resultBytes;
-		}
 
 		protected override string ProcessTemplate(string inputFileName, string inputFileContent, ITextTemplating processor, IVsHierarchy hierarchy)
         {

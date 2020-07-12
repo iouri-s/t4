@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="dotnet-t4-vsix.85b769de-38f5-2020-91ae-d0dfa431fe30" Version="1.0.0" Language="en-US" Publisher="Mono" />
-        <DisplayName>Text Templating File Generator .NET Core 3.1</DisplayName>
+        <Identity Id="dotnet-t4-vsix.85b769de-38f5-2020-91ae-d0dfa431fe30" Version="1.0.0" Language="en-US" Publisher="Snakorse" />
+        <DisplayName>dotnet-t4</DisplayName>
         <Description xml:space="preserve">Generate files from T4 templates using the .NET Core 3.1 runtime.</Description>
         <License>LICENSE</License>
     </Metadata>

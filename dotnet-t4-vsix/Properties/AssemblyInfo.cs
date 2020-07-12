@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("dotnet-t4-vsix")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Mono")]
+[assembly: AssemblyCompany("Microsoft Corp")]
 [assembly: AssemblyProduct("dotnet-t4-vsix")]
-[assembly: AssemblyCopyright("Copyright 2020 Mono")]
+[assembly: AssemblyCopyright("Copyright (c) Microsoft Corp")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
