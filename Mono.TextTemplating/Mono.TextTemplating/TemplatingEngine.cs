@@ -32,6 +32,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.CSharp;
 using Microsoft.VisualStudio.TextTemplating;
@@ -645,6 +646,9 @@ namespace Mono.TextTemplating
 			var writeMeth = new CodeMethodReferenceExpression (new CodeThisReferenceExpression (), "Write");
 			var toStringMeth = new CodeMethodReferenceExpression (toStringHelper, "ToStringWithCulture");
 			bool helperMode = false;
+			TemplateSegment lastSegment = null;
+			CodeSnippetTypeMember lastCodeSnippetTypeMember = null;
+			bool shoulCheckBlankContent = false;
 
 			//build the code from the segments
 			foreach (TemplateSegment seg in pt.Content) {
@@ -656,6 +660,11 @@ namespace Mono.TextTemplating
 						f = FileUtil.AbsoluteToRelativePath (baseDirectory, f).Replace ('\\', '/');
 					location = new CodeLinePragma (f, seg.StartLocation.Line);
 				}
+				if (shoulCheckBlankContent && seg.Type == SegmentType.Helper && lastCodeSnippetTypeMember != null) {
+					type.Members.Remove (lastCodeSnippetTypeMember);
+				}
+				shoulCheckBlankContent = false;
+				lastCodeSnippetTypeMember = null;
 				switch (seg.Type) {
 				case SegmentType.Block:
 					if (helperMode)
@@ -669,6 +678,9 @@ namespace Mono.TextTemplating
 							new CodeMethodInvokeExpression (toStringMeth, new CodeSnippetExpression (seg.Text))));
 					break;
 				case SegmentType.Content:
+					if (helperMode && Regex.IsMatch (seg.Text, @"^[\r\n]*$", RegexOptions.Compiled) && lastSegment?.Type == SegmentType.Helper) {
+						shoulCheckBlankContent = true;
+					}
 					st = new CodeExpressionStatement (new CodeMethodInvokeExpression (writeMeth, new CodePrimitiveExpression (seg.Text)));
 					break;
 				case SegmentType.Helper:
@@ -679,6 +691,7 @@ namespace Mono.TextTemplating
 				default:
 					throw new InvalidOperationException ();
 				}
+				lastSegment = seg;
 				if (st != null) {
 					if (helperMode) {
 						//convert the statement into a snippet member and attach it to the top level type
@@ -686,8 +699,12 @@ namespace Mono.TextTemplating
 						using (var writer = new StringWriter ()) {
 							settings.Provider.GenerateCodeFromStatement (st, writer, null);
 							var text = writer.ToString ();
-							if (!string.IsNullOrEmpty (text))
-								type.Members.Add (CreateSnippetMember (text, location));
+							if (!string.IsNullOrEmpty (text)) {
+								var mem = CreateSnippetMember (text, location);
+								type.Members.Add (mem);
+								if(shoulCheckBlankContent)
+									lastCodeSnippetTypeMember = mem;
+							}
 						}
 					} else {
 						st.LinePragma = location;
