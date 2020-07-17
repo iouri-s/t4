@@ -4,6 +4,13 @@
 
 Mono.TextTemplating is an open-source implementation of the T4 text templating engine, a simple general-purpose way to use C# to generate any kind of text files.
 
+## Enhancement for .net core 3.1 runtime
+
+As a fork repo of the mono/t4, we mainly work at the support of .net core 3.1 runtime. We already upgrade the `dotnet-t4` to netcoreapp3.1 and made some releases. So you have ways to use it easily:
+
+- Use as vs extension, vsix can download here: [dotnet-t4-vsix](https://marketplace.visualstudio.com/items?itemName=Snakorse.snakorse-dotnet-t4)
+- Use as dotnet tool described bellow
+
 It's provided as a `dotnet` tool called `t4`:
 
 ```bash
