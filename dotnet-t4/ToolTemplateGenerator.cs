@@ -20,7 +20,8 @@
 // THE SOFTWARE.
 
 using System.CodeDom.Compiler;
-
+using System.Collections.Generic;
+using System.ComponentModel;
 using Microsoft.VisualStudio.TextTemplating;
 
 namespace Mono.TextTemplating
@@ -30,6 +31,9 @@ namespace Mono.TextTemplating
 		public ToolTemplateGenerator ()
 		{
 			Refs.Add (typeof (CompilerErrorCollection).Assembly.Location);
+			Refs.Add (typeof (DescriptionAttribute).Assembly.Location);
+			Refs.Add (typeof (List<>).Assembly.Location);
+			Refs.Add ("System.Collections");
 		}
 
 		protected override ITextTemplatingSession CreateSession () => new ToolTemplateSession (this);

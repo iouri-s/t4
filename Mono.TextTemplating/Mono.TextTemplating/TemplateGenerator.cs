@@ -202,10 +202,14 @@ namespace Mono.TextTemplating
 			ProjectMetadata.Metadatas[nameof (ProjectMetadata.ProjectDir)] = Path.GetDirectoryName (projectFile) + @"\";
 		}
 
-		string ResolveProjectMetadata (string metadata)
+		string ResolveProjectMetadata (string metadata, out bool isAllMacros)
 		{
-			if (string.IsNullOrEmpty (metadata))
+			if (string.IsNullOrEmpty (metadata)) {
+				isAllMacros = false;
 				return metadata;
+			}
+
+			isAllMacros = Regex.IsMatch (metadata, @"^(\$\(([^\)]+)\))+$");
 
 			var regex = new Regex (@"\$\(([^\)]+)\)", RegexOptions.Compiled);
 			var result = regex.Replace (metadata, match => {
@@ -243,8 +247,8 @@ namespace Mono.TextTemplating
 		
 		protected virtual string ResolveAssemblyReference (string assemblyReference)
 		{
-			assemblyReference = ResolveProjectMetadata (assemblyReference);
-			if (System.IO.Path.IsPathRooted (assemblyReference))
+			assemblyReference = ResolveProjectMetadata (assemblyReference, out var isAllMacros);
+			if (System.IO.Path.IsPathRooted (assemblyReference) || isAllMacros)
  				return assemblyReference;
  			foreach (string referencePath in ReferencePaths) {
  				var path = System.IO.Path.Combine (referencePath, assemblyReference);
@@ -288,7 +292,7 @@ namespace Mono.TextTemplating
 		
 		protected virtual string ResolvePath (string path)
 		{
-			path = ResolveProjectMetadata (path);
+			path = ResolveProjectMetadata (path, out _);
 
 			if (!string.IsNullOrEmpty(path)) {
 				path = Environment.ExpandEnvironmentVariables (path);
