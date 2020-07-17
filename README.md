@@ -9,7 +9,14 @@ Mono.TextTemplating is an open-source implementation of the T4 text templating e
 As a fork repo of the mono/t4, we mainly work at the support of .net core 3.1 runtime. We already upgrade the `dotnet-t4` to netcoreapp3.1 and made some releases. So you have ways to use it easily:
 
 - Use as vs extension, vsix can download here: [dotnet-t4-vsix](https://marketplace.visualstudio.com/items?itemName=Snakorse.snakorse-dotnet-t4)
-- Use as dotnet tool described bellow
+- Use as dotnet tool:
+
+```bash
+dotnet tool install -g dotnet-t4 --add-source  https://www.myget.org/F/snakorse/api/v3/index.json --version 2.2.0-preview-0025-g48b4249552
+```
+
+
+**Bellow is ported from the mono/t4 repo**
 
 It's provided as a `dotnet` tool called `t4`:
 
