@@ -33,7 +33,7 @@ namespace Mono.TextTemplating
 			Refs.Add (typeof (CompilerErrorCollection).Assembly.Location);
 			Refs.Add (typeof (DescriptionAttribute).Assembly.Location);
 			Refs.Add (typeof (List<>).Assembly.Location);
-			Refs.Add ("System.Collections");
+			Refs.Add (typeof (HashSet<>).Assembly.Location);
 		}
 
 		protected override ITextTemplatingSession CreateSession () => new ToolTemplateSession (this);
