@@ -157,10 +157,7 @@ namespace Mono.TextTemplating.CodeCompilation
 				return FromError (RuntimeKind.NetCore, "Could not find csc.dll in any .NET Core SDK" );
 			}
 
-			var runtimeDir = FindHighestVersionedDirectory (Path.Combine (dotnetRoot, "shared", "Microsoft.NETCore.App"), d => File.Exists (Path.Combine (d, "System.Runtime.dll")));
-			if (runtimeDir == null) {
-				return FromError (RuntimeKind.NetCore, "Could not find System.Runtime.dll in any .NET shared runtime" );
-			}
+			var runtimeDir = Path.GetDirectoryName(typeof (int).Assembly.Location);
 
 			return new RuntimeInfo (RuntimeKind.NetCore) { RuntimeDir = runtimeDir, CscPath = MakeCscPath (sdkDir) };
 		}

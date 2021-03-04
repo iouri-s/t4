@@ -79,6 +79,7 @@ namespace Mono.TextTemplating
 		
 		public TemplateGenerator ()
 		{
+			ReferencePaths.Add (Path.GetDirectoryName(typeof (int).Assembly.Location).Replace("Microsoft.NETCore.App", "Microsoft.AspNetCore.App"));
 			Refs.Add (typeof (TextTransformation).Assembly.Location);
 			Refs.Add (typeof(Uri).Assembly.Location);
 			Refs.Add (typeof (File).Assembly.Location);
